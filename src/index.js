@@ -4,11 +4,9 @@ const chain = function (fn, ...args) {
   const current = done => invoke(...buildCallsStack(current, done))
   return Object.assign(
     current,
-    Object.freeze({ prev: this, fn, args, do: suppressContext(chain.bind(current)) })
+    Object.freeze({ prev: this, fn, args, do: chain.bind(current) })
   )
 }
-
-const suppressContext = f => (...args) => f(...args)
 
 const buildCallsStack = (current, done, next = null) => {
   if (!current.prev) {
@@ -35,4 +33,4 @@ const invoke = (current, done, next, rest = []) => {
   })
 }
 
-module.exports = suppressContext(chain)
+module.exports = chain.bind(null)
