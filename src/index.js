@@ -2,7 +2,10 @@
 
 const chain = function (fn, ...args) {
   const current = (done) => buildPipeline(current, done)
-  return Object.assign(current, { prev: this, fn, args, do: suppressContext(chain.bind(current)) })
+  return Object.assign(
+    current,
+    Object.freeze({ prev: this, fn, args, do: suppressContext(chain.bind(current)) })
+  )
 }
 
 const suppressContext = f => (...args) => f(...args)
