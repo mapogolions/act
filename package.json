@@ -1,0 +1,22 @@
+{
+  "name": "@mapogolions/do",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mapogolions/do.git"
+  },
+  "author": "Pavel Ivanov",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/mapogolions/do/issues"
+  },
+  "homepage": "https://github.com/mapogolions/do#readme",
+  "devDependencies": {
+    "standard": "^16.0.4"
+  }
+}
