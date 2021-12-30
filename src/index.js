@@ -1,0 +1,36 @@
+'use strict'
+
+const chain = function (fn, ...args) {
+  const current = (done) => buildPipeline(current, done)
+  return Object.assign(current, { prev: this, fn, args, do: suppressContext(chain.bind(current)) })
+}
+
+const suppressContext = f => (...args) => f(...args)
+
+const buildPipeline = (current, done, next = null) => {
+  if (current.prev) {
+    buildPipeline(current.prev, done, data => invoke(current, done, next, data))
+  } else {
+    invoke(current, done, next)
+  }
+}
+
+const invoke = (current, done, next, rest = []) => {
+  if (!current.fn) return
+  const args = [...current.args, ...rest]
+  current.fn(...args, (err, ...data) => {
+    if (err) {
+      done(err)
+      return
+    }
+    if (next) {
+      next(data)
+      return
+    }
+    if (done) {
+      done(null, ...data)
+    }
+  })
+}
+
+module.exports = suppressContext(chain)
