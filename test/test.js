@@ -43,13 +43,13 @@ test.cb('should execute chain', t => {
 
 test.cb('should reuse shared block of chain', t => {
   const counter = wrap(10, (n, next) => next(null, ++n))
-  const base = chain(counter, 0).do(counter).do(counter)
-  const fork1 = base.do(counter)
-  const fork2 = base.do(counter).do(counter).do(counter).do(counter).do(counter).do(counter)
+  const f = chain(counter, 0).do(counter).do(counter)
+  const g = f.do(counter)
+  const h = f.do(counter).do(counter).do(counter).do(counter).do(counter).do(counter)
 
-  base((_err, result) => t.is(result, 3))
-  fork1((_err, result) => t.is(result, 4))
-  fork2((_err, result) => {
+  f((_err, result) => t.is(result, 3))
+  g((_err, result) => t.is(result, 4))
+  h((_err, result) => {
     t.is(result, 9)
     t.end()
   })
