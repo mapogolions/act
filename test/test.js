@@ -56,7 +56,7 @@ test.cb('should reuse shared block of chain', t => {
 })
 
 test.cb('should skip tail of chain', t => {
-  const foo = wrap(40, (next) => {
+  const foo = wrap(40, next => {
     next(null, 'foo')
   })
 

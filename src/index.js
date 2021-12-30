@@ -1,7 +1,7 @@
 'use strict'
 
 const chain = function (fn, ...args) {
-  const current = (done) => buildPipeline(current, done)
+  const current = done => buildPipeline(current, done)
   return Object.assign(
     current,
     Object.freeze({ prev: this, fn, args, do: suppressContext(chain.bind(current)) })
