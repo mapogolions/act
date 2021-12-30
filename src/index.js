@@ -1,7 +1,7 @@
 'use strict'
 
 const chain = function (fn, ...args) {
-  const current = done => buildPipeline(current, done)
+  const current = done => buildCallsStack(current, done)
   return Object.assign(
     current,
     Object.freeze({ prev: this, fn, args, do: suppressContext(chain.bind(current)) })
@@ -10,9 +10,9 @@ const chain = function (fn, ...args) {
 
 const suppressContext = f => (...args) => f(...args)
 
-const buildPipeline = (current, done, next = null) => {
+const buildCallsStack = (current, done, next = null) => {
   if (current.prev) {
-    buildPipeline(current.prev, done, data => invoke(current, done, next, data))
+    buildCallsStack(current.prev, done, data => invoke(current, done, next, data))
   } else {
     invoke(current, done, next)
   }
