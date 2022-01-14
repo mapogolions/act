@@ -9,9 +9,7 @@ const act = function (fn, ...args) {
 }
 
 const buildCallsStack = (current, done, next = null) => {
-  if (!current.prev) {
-    return [current, done, next]
-  }
+  if (!current.prev) return [current, done, next]
   return buildCallsStack(current.prev, done, data => invoke(current, done, next, data))
 }
 
