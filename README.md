@@ -1,3 +1,3 @@
 # act
 
-docs in progress
+Inspired by [do](https://github.com/metarhia/do)
