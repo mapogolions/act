@@ -1,7 +1,7 @@
 'use strict'
 
 const test = require('ava')
-const chain = require('../src/index')
+const act = require('../src/index')
 
 test.cb('should execute chain', t => {
   const readConfig = wrap(40, (filename, key, next) => {
@@ -29,10 +29,10 @@ test.cb('should execute chain', t => {
     next(null, true)
   })
 
-  const f = chain(readConfig, '.env', 'connectionString')
-    .do(select, 'select email from')
-    .do(intercept)
-    .do(sendEmail, '[subject]', '...')
+  const f = act(readConfig, '.env', 'connectionString')
+    .act(select, 'select email from')
+    .act(intercept)
+    .act(sendEmail, '[subject]', '...')
 
   f((err, result) => {
     t.is(err, null)
@@ -43,9 +43,9 @@ test.cb('should execute chain', t => {
 
 test.cb('should reuse shared block of chain', t => {
   const counter = wrap(10, (n, next) => next(null, ++n))
-  const f = chain(counter, 0).do(counter).do(counter)
-  const g = f.do(counter)
-  const h = f.do(counter).do(counter).do(counter).do(counter).do(counter).do(counter)
+  const f = act(counter, 0).act(counter).act(counter)
+  const g = f.act(counter)
+  const h = f.act(counter).act(counter).act(counter).act(counter).act(counter).act(counter)
 
   f((_err, result) => t.is(result, 3))
   g((_err, result) => t.is(result, 4))
@@ -67,7 +67,7 @@ test.cb('should skip tail of chain', t => {
 
   const baz = wrap(30, next => t.fail)
 
-  const f = chain(foo).do(bar).do(baz)
+  const f = act(foo).act(bar).act(baz)
   f((err, result) => {
     t.is(err.code, 101)
     t.is(result, undefined)
@@ -80,7 +80,7 @@ test.cb('should suppress context', t => {
     t.pass()
     t.end()
   })
-  chain.call({ }, f)()
+  act.call({ }, f)()
 })
 
 test.cb('should execute one element chain', t => {
@@ -89,7 +89,7 @@ test.cb('should execute one element chain', t => {
     t.is(bar, 'bar')
     t.end()
   })
-  chain(f, 'foo', 'bar')()
+  act(f, 'foo', 'bar')()
 })
 
 const wrap = (delay, fn) => (...args) => setTimeout(fn, delay, ...args)

@@ -1,10 +1,10 @@
 'use strict'
 
-const chain = function (fn, ...args) {
+const act = function (fn, ...args) {
   const current = done => invoke(...buildCallsStack(current, done))
   return Object.assign(
     current,
-    Object.freeze({ prev: this, fn, args, do: chain.bind(current) })
+    Object.freeze({ prev: this, fn, args, act: act.bind(current) })
   )
 }
 
@@ -33,4 +33,4 @@ const invoke = (current, done, next, rest = []) => {
   })
 }
 
-module.exports = chain.bind(null)
+module.exports = act.bind(null)

@@ -1,5 +1,5 @@
 {
-  "name": "@mapogolions/do",
+  "name": "@mapogolions/act",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
@@ -8,14 +8,14 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/mapogolions/do.git"
+    "url": "git+https://github.com/mapogolions/act.git"
   },
   "author": "Pavel Ivanov",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/mapogolions/do/issues"
+    "url": "https://github.com/mapogolions/act/issues"
   },
-  "homepage": "https://github.com/mapogolions/do#readme",
+  "homepage": "https://github.com/mapogolions/act#readme",
   "devDependencies": {
     "ava": "^3.15.0",
     "standard": "^16.0.4"
