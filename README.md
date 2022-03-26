@@ -11,15 +11,13 @@ What's wrong with `do`:
 4) Based on mutable data structures
 
 
-#### How to use
+#### How to install
 
 ```sh
-npm i
-npm format
-npm run test
+npm i @mapogolions/do
 ```
 
-#### Examples
+#### Usage
 
 ##### How to use with `CPS`
 
