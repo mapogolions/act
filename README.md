@@ -68,35 +68,9 @@ function done(err, result) {
 act(readFileAsJson, ${filename}, 'utf-8').call(null, done)
 ```
 
-##### Partially applied function
+##### Partially applied function & Reusable blocks (because this library is fully immutable)
+
 ```js
-function readFileAsJson(filename, encoding, next) {
-  // ...
-}
-
-function readSetting(key, settings, next) {
-  setTimeout(next, 0, null, settings[key]);
-}
-
-function done(err, result) {
-  if (err) {
-    console.error(err.message)
-    return;
-  }
-  console.log(result);
-}
-
-act(readFileAsJson, ${filename}, 'utf-8')
-  .act(readSetting, 'license') // the second argument (settings) will be provided by the `readFileAsJson`
-  .call(null, done)
-```
-
-##### Reusable blocks (because this library is fully immutable)
-```js
-function readFile(filename, encoding, next) {
-  // ...
-}
-
 function convertToJson(content, next) {
   setTimeout(() => {
     try {
@@ -107,7 +81,7 @@ function convertToJson(content, next) {
   })
 }
 
-function getSetting(key, settings, next) {
+function getSetting(key, settings, next) { // the second argument (settings) will be provided by the `readFileAsJson`
   setTimeout(next, 0, null, settings[key])
 }
 
@@ -119,7 +93,7 @@ function done(err, result) {
   console.log(result);
 }
 
-const readSettings = act(readFile, ${filename}, 'utf-8').act(convertToJson) // define a reusable block
+const readSettings = act(fs.readFile, ${filename}, 'utf-8').act(convertToJson) // define a reusable block
 readSettings.act(getSetting, 'license').call(null, done)
 readSettings.act(getSetting, 'author').call(null, done)
 ```
