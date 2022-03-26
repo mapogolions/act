@@ -135,3 +135,5 @@ const readSettings = act(readFile, ${filename}, 'utf-8').act(convertToJson) // d
 readSettings.act(getSetting, 'license').call(null, done)
 readSettings.act(getSetting, 'author').call(null, done)
 ```
+
+Also see [unit tests](./test/test.js) for more details
