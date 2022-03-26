@@ -4,16 +4,8 @@ Inspired by [do](https://github.com/metarhia/do)
 
 This library was born as an attempt to eliminate some of the shortcomings of the [do](https://github.com/metarhia/do) library
 
-:heavy_check_mark: support of partially applied function
-
-:heavy_check_mark: fully immutable
-
-:heavy_check_mark: reusable block of chain
-
-```
 What's wrong with `do`:
-1) It supports chaining, but doesn't support reusable blocks of chain
-2) Doesn't support passing data along the chain
-3) Direct Access only to the last error and last result
-
- TODO: add examples
+1) It supports chaining, but does not support reusing blocks of the chain
+2) The output of one function(block of chain) does not become the input of another
+3) Direct access to only the last result and the last error
+4) Based on mutable data structures
