@@ -2,7 +2,7 @@
 
 Inspired by [do](https://github.com/metarhia/do)
 
-This library was born as an attempt to eliminate some of the shortcomings of the `do` library
+This library was born as an attempt to eliminate some of the shortcomings of the [do](https://github.com/metarhia/do) library
 
 :heavy_check_mark: support of partially applied function
 
