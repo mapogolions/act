@@ -47,7 +47,7 @@ function done(err, result) {
   console.log(result);
 }
 
-act(readFileAsJson, __filename, 'utf-8').call(null, done)
+act(readFileAsJson, path-to-your-file, 'utf-8').call(null, done)
 ```
 
 ##### How to use with `Promise`
@@ -67,5 +67,33 @@ function done(err, result) {
   console.log(result);
 }
 
-act(readFileAsJson, __filename, 'utf-8').call(null, done)
+act(readFileAsJson, path-to-your-file, 'utf-8').call(null, done)
+```
+
+##### Partially applied function
+```js
+function readFileAsJson(filename, encoding, next) {
+  fs.readFile(filename, encoding)
+    .then(content => next(null, JSON.parse(content)))
+    .catch(next)
+}
+function readSetting(key, settings, next) {
+  new Promise(resolve => {
+    setTimeout(resolve, 0, settings[key]);
+  })
+    .then(setting => next(null, setting))
+    .catch(next)
+}
+
+function done(err, result) {
+  if (err) {
+    console.error(err.message)
+    return;
+  }
+  console.log(result);
+}
+
+act(readFileAsJson, path-to-your-file, 'utf-8')
+  .act(readSetting, 'license') // the second argument will be provided by the `readFileAsJson`
+  .call(null, done)
 ```
