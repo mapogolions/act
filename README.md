@@ -71,17 +71,11 @@ act(readFileAsJson, ${filename}, 'utf-8').call(null, done)
 ##### Partially applied function
 ```js
 function readFileAsJson(filename, encoding, next) {
-  fs.readFile(filename, encoding)
-    .then(content => next(null, JSON.parse(content)))
-    .catch(next)
+  // ...
 }
 
 function readSetting(key, settings, next) {
-  new Promise(resolve => {
-    setTimeout(resolve, 0, settings[key]);
-  })
-    .then(setting => next(null, setting))
-    .catch(next)
+  setTimeout(next, 0, null, settings[key]);
 }
 
 function done(err, result) {
@@ -100,25 +94,21 @@ act(readFileAsJson, ${filename}, 'utf-8')
 ##### Reusable blocks (because this library is fully immutable)
 ```js
 function readFile(filename, encoding, next) {
-  fs.readFile(filename, encoding)
-    .then(content => next(null, content))
-    .catch(next)
+  // ...
 }
 
 function convertToJson(content, next) {
-  new Promise((resolve, reject) => {
-    setTimeout(() => resolve(JSON.parse(content)));
+  setTimeout(() => {
+    try {
+      next(null, JSON.parse(content))
+    } catch (err) {
+      next(err)
+    }
   })
-    .then(settings => next(null, settings));
-    .catch(next)
 }
 
 function getSetting(key, settings, next) {
-  new Promise(resolve => {
-    setTimeout(resolve, 0, settings[key])
-  })
-    .then(setting => next(null, setting))
-    .catch(next)
+  setTimeout(next, 0, null, settings[key])
 }
 
 function done(err, result) {
