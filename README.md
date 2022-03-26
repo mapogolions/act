@@ -95,6 +95,43 @@ function done(err, result) {
 }
 
 act(readFileAsJson, ${filename}, 'utf-8')
-  .act(readSetting, 'license') // the second argument will be provided by the `readFileAsJson`
+  .act(readSetting, 'license') // the second argument (settings) will be provided by the `readFileAsJson`
   .call(null, done)
+```
+
+##### Reusable blocks (because this library is fully immutable)
+```js
+function readFile(filename, encoding, next) {
+  fs.readFile(filename, encoding)
+    .then(content => next(null, content))
+    .catch(next)
+}
+
+function convertToJson(content, next) {
+  new Promise((resolve, reject) => {
+    setTimeout(() => resolve(JSON.parse(content)));
+  })
+    .then(settings => next(null, settings));
+    .catch(next)
+}
+
+function getSettingByKey(key, settings, next) {
+  new Promise(resolve => {
+    setTimeout(resolve, 0, settings[key])
+  })
+    .then(setting => next(null, setting))
+    .catch(next)
+}
+
+function done(err, result) {
+  if (err) {
+    console.error(err.message)
+    return;
+  }
+  console.log(result);
+}
+
+const readSettings = act(readFile, ${filename}, 'utf-8').act(convertToJson) // define a reusable block
+act(readSettings).act(getSettingByKey, 'license').call(null, done)
+act(readSettings).act(getSettingByKey, 'author').call(null, done)
 ```
