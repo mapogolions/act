@@ -132,6 +132,6 @@ function done(err, result) {
 }
 
 const readSettings = act(readFile, ${filename}, 'utf-8').act(convertToJson) // define a reusable block
-act(readSettings).act(getSetting, 'license').call(null, done)
-act(readSettings).act(getSetting, 'author').call(null, done)
+readSettings.act(getSetting, 'license').call(null, done)
+readSettings.act(getSetting, 'author').call(null, done)
 ```
