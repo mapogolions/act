@@ -9,3 +9,12 @@ What's wrong with `do`:
 2) The output of one function(block of chain) does not become the input of another
 3) Direct access to only the last result and the last error
 4) Based on mutable data structures
+
+
+#### How to use
+
+```sh
+npm i
+npm format
+npm run test
+```
