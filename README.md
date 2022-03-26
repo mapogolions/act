@@ -14,7 +14,7 @@ What's wrong with `do`:
 #### How to install
 
 ```sh
-npm i @mapogolions/do
+npm i @mapogolions/act
 ```
 
 #### Usage
