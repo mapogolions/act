@@ -29,8 +29,8 @@ function readFileAsJson(filename, encoding, next) {
       return;
     }
     try {
-      const contentAsJson = JSON.parse(content)
-      next(null, contentAsJson)
+      const obj = JSON.parse(content)
+      next(null, obj)
     } catch (err) {
       next(err)
     }
@@ -71,7 +71,7 @@ act(readFileAsJson, ${filename}, 'utf-8').call(null, done)
 ##### Partially applied function & Reusable blocks (because this library is fully immutable)
 
 ```js
-function convertToJson(content, next) {
+function parseContent(content, next) {
   setTimeout(() => {
     try {
       next(null, JSON.parse(content))
@@ -81,7 +81,7 @@ function convertToJson(content, next) {
   })
 }
 
-function getSetting(key, settings, next) { // the second argument (settings) will be provided by the `convertToJson`
+function getSetting(key, settings, next) { // the second argument (settings) will be provided by the `parseContent`
   setTimeout(next, 0, null, settings[key])
 }
 
@@ -93,7 +93,7 @@ function done(err, result) {
   console.log(result);
 }
 
-const readSettings = act(fs.readFile, ${filename}, 'utf-8').act(convertToJson) // define a reusable block
+const readSettings = act(fs.readFile, ${filename}, 'utf-8').act(parseContent) // define a reusable block
 readSettings.act(getSetting, 'license').call(null, done)
 readSettings.act(getSetting, 'author').call(null, done)
 ```
