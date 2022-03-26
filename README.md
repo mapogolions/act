@@ -115,7 +115,7 @@ function convertToJson(content, next) {
     .catch(next)
 }
 
-function getSettingByKey(key, settings, next) {
+function getSetting(key, settings, next) {
   new Promise(resolve => {
     setTimeout(resolve, 0, settings[key])
   })
@@ -132,6 +132,6 @@ function done(err, result) {
 }
 
 const readSettings = act(readFile, ${filename}, 'utf-8').act(convertToJson) // define a reusable block
-act(readSettings).act(getSettingByKey, 'license').call(null, done)
-act(readSettings).act(getSettingByKey, 'author').call(null, done)
+act(readSettings).act(getSetting, 'license').call(null, done)
+act(readSettings).act(getSetting, 'author').call(null, done)
 ```
