@@ -81,7 +81,7 @@ function convertToJson(content, next) {
   })
 }
 
-function getSetting(key, settings, next) { // the second argument (settings) will be provided by the `readFileAsJson`
+function getSetting(key, settings, next) { // the second argument (settings) will be provided by the `convertToJson`
   setTimeout(next, 0, null, settings[key])
 }
 
