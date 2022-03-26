@@ -18,3 +18,54 @@ npm i
 npm format
 npm run test
 ```
+
+#### Examples
+
+##### How to use with `CPS`
+
+```js
+function readFileAsJson(filename, encoding, next) {
+  fs.readFile(filename, encoding, (err, content) => {
+    if (err) {
+      next(null, data)
+      return;
+    }
+    try {
+      const contentAsJson = JSON.parse(content)
+      next(null, contentAsJson)
+    } catch (err) {
+      next(err)
+    }
+  });
+}
+
+function done(err, result) {
+  if (err) {
+    console.error(err.message)
+    return;
+  }
+  console.log(result);
+}
+
+act(readFileAsJson, __filename, 'utf-8').call(null, done)
+```
+
+##### How to use with `Promise`
+
+```js
+function readFileAsJson(filename, encoding, next) {
+  fs.readFile(filename, encoding)
+    .then(content => next(null, JSON.parse(content)))
+    .catch(next)
+}
+
+function done(err, result) {
+  if (err) {
+    console.error(err.message)
+    return;
+  }
+  console.log(result);
+}
+
+act(readFileAsJson, __filename, 'utf-8').call(null, done)
+```
