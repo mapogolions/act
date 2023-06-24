@@ -2,14 +2,6 @@
 
 Inspired by [do](https://github.com/metarhia/do)
 
-This library was born as an attempt to eliminate some of the shortcomings of the [do](https://github.com/metarhia/do) library
-
-What's wrong with `do`:
-1) It supports chaining, but does not support reusing blocks of the chain
-2) The output of one function(block of chain) does not become the input of another
-3) Direct access to only the last result and the last error
-4) Based on mutable data structures
-
 
 #### How to install
 
@@ -18,6 +10,61 @@ npm i @mapogolions/act
 ```
 
 #### Usage
+
+##### Some examples to get the basic idea
+
+```js
+function buildGreeting(phrase, who, next) {
+    const greeting = `${phrase} ${who}`;
+    return next(null, greeting);
+}
+
+function printGreeting(applyStyle, phrase, next) {
+    console.log(applyStyle(phrase));
+    next(null, true);
+}
+
+function done(err, result) {
+    if (err != null) {
+        console.log(err)
+        return
+    }
+    console.log(result);
+}
+
+act(buildGreeting, "Hello", "Jane Doe")
+  .act(printGreeting, x => x.toUpperCase())
+  .call(null, done);
+```
+
+User can interrupt execution at any point by using the `next` callback and passing a `non-null` object as the first argument
+
+```js
+function basicAuth(headers, { userName, password }, next) {
+    const header = headers['Authorization'];
+    const decoded = Buffer.from(header, 'base64').toString('utf-8');
+    var parts = decoded.split(':');
+    if (userName === parts[0] && password === parts[1]) {
+        next(null, true);
+        return;
+    }
+    next(new Error('Invalid credentials'));
+}
+
+function done(err, result) {
+    if (err !== null) {
+        console.log(err.message);
+        return;
+    }
+    console.log(result);
+}
+
+const headers = {
+  Authorization: Buffer.from('admin:pwd').toString('base64')
+};
+
+act(basicAuth, headers, { userName: 'admin', password: '123' }).call(null, done);
+```
 
 ##### How to use with `CPS`
 
@@ -68,7 +115,7 @@ function done(err, result) {
 act(readFileAsJson, ${filename}, 'utf-8').call(null, done)
 ```
 
-##### Partially applied function & Reusable blocks (because this library is fully immutable)
+##### Partially applied function & Reusable blocks
 
 ```js
 function parseContent(content, next) {

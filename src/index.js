@@ -1,16 +1,16 @@
 'use strict'
 
 const act = function (fn, ...args) {
-  const current = done => invoke(...buildCallsStack(current, done))
+  const current = done => invoke(...buildCallStack(current, done))
   return Object.assign(
     current,
     Object.freeze({ prev: this, fn, args, act: act.bind(current) })
   )
 }
 
-const buildCallsStack = (current, done, next = null) => {
+const buildCallStack = (current, done, next = null) => {
   if (!current.prev) return [current, done, next]
-  return buildCallsStack(current.prev, done, data => invoke(current, done, next, data))
+  return buildCallStack(current.prev, done, data => invoke(current, done, next, data))
 }
 
 const invoke = (current, done, next, rest = []) => {
