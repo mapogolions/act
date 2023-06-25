@@ -1,7 +1,7 @@
 'use strict'
 
 const test = require('ava')
-const act = require('../src/index.js')
+const { act } = require('../src/index.js')
 
 test.cb('should execute chain', t => {
   const readConfig = wrap(40, (filename, key, next) => {

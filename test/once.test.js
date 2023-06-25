@@ -1,9 +1,9 @@
 'use strict'
 
 const test = require('ava')
-const { once } = require('../src/act.js')
+const { once } = require('../src/index.js')
 
-test.cb('should be able to handle case when registration is asynchronous and actaul call happens after it', t => {
+test.cb('should be able to handle case when registration is async and call happens after it', t => {
   let calls = 0
   let consumers = 0
   const readKey = next => setTimeout(() => {
