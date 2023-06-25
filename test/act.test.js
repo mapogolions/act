@@ -1,7 +1,7 @@
 'use strict'
 
 const test = require('ava')
-const { act } = require('../src/index.js')
+const act = require('../src/index.js')
 
 test.cb('should execute chain', t => {
   const readConfig = wrap(40, (filename, key, next) => {
@@ -119,7 +119,7 @@ test.cb('should be able to pass nothing as `done`', t => {
     t.is(bar, 'bar')
     t.end()
   })
-  act(f, 'foo', 'bar')( /* done */ )
+  act(f, 'foo', 'bar')(/* done */)
 })
 
 const wrap = (delay, fn) => (...args) => setTimeout(fn, delay, ...args)

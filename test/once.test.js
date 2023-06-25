@@ -1,7 +1,7 @@
 'use strict'
 
 const test = require('ava')
-const { once } = require('../src/index.js')
+const { once } = require('../src/act.js')
 
 test.cb('delayed call should get value from cache when its registration precedes cps call', t => {
   let calls = 0

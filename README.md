@@ -101,14 +101,13 @@ const readSettings = act(fs.readFile, path.join(__dirname, 'package.json'), 'utf
   .act(parseContent)
   .once()
 
-
-// Note that if we DO NOT call `once` that fs.readFile and parseContent will be called for each branch (i.e. twice)
-// `Once` caches a value that will only be evaludated once.
+// Note that if we DO NOT call `once` then fs.readFile and parseContent will be called for each branch
+// `Once` caches the result and reuses it across branches
 // Whether or not to use this kind of optimization depends on your task.
+// In this example, `once` helps to avoid double reading and parsing
+
 readSettings.act(getSetting, 'license').call(null, done)
 readSettings.act(getSetting, 'author').call(null, done)
 ```
-
-
 
 Also see [unit tests](./test/test.js) for more details
