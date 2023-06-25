@@ -3,7 +3,7 @@
 const test = require('ava')
 const { once } = require('../src/act.js')
 
-test.cb('cps should be called only once when called from multiple consumers', t => {
+test.cb('should be able to handle case when registration is asynchronous and actaul call happens after it', t => {
   let calls = 0
   let consumers = 0
   const readKey = next => setTimeout(() => {
