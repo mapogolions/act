@@ -11,68 +11,16 @@ npm i @mapogolions/act
 
 #### Usage
 
-##### Some examples to get the basic idea
-
-```js
-function buildGreeting(phrase, who, next) {
-    const greeting = `${phrase} ${who}`;
-    return next(null, greeting);
-}
-
-function printGreeting(applyStyle, phrase, next) {
-    console.log(applyStyle(phrase));
-    next(null, true);
-}
-
-function done(err, result) {
-    if (err != null) {
-        console.log(err)
-        return
-    }
-    console.log(result);
-}
-
-act(buildGreeting, "Hello", "Jane Doe")
-  .act(printGreeting, x => x.toUpperCase())
-  .call(null, done);
-```
-
-User can interrupt execution at any point by using the `next` callback and passing a `non-null` object as the first argument
-
-```js
-function basicAuth(headers, { userName, password }, next) {
-    const header = headers['Authorization'];
-    const decoded = Buffer.from(header, 'base64').toString('utf-8');
-    var parts = decoded.split(':');
-    if (userName === parts[0] && password === parts[1]) {
-        next(null, true);
-        return;
-    }
-    next(new Error('Invalid credentials'));
-}
-
-function done(err, result) {
-    if (err !== null) {
-        console.log(err.message);
-        return;
-    }
-    console.log(result);
-}
-
-const headers = {
-  Authorization: Buffer.from('admin:pwd').toString('base64')
-};
-
-act(basicAuth, headers, { userName: 'admin', password: '123' }).call(null, done);
-```
-
 ##### How to use with `CPS`
 
 ```js
+const fs = require('fs')
+const path = require('path')
+
 function readFileAsJson(filename, encoding, next) {
   fs.readFile(filename, encoding, (err, content) => {
     if (err) {
-      next(null, data)
+      next(err)
       return;
     }
     try {
@@ -92,12 +40,15 @@ function done(err, result) {
   console.log(result);
 }
 
-act(readFileAsJson, ${filename}, 'utf-8').call(null, done)
+act(readFileAsJson, path.join(__dirname, 'package.json'), 'utf-8').call(null, done)
 ```
 
 ##### How to use with `Promise`
 
 ```js
+const fs = require('fs').promises
+const path = require('path')
+
 function readFileAsJson(filename, encoding, next) {
   fs.readFile(filename, encoding)
     .then(content => next(null, JSON.parse(content)))
@@ -112,14 +63,18 @@ function done(err, result) {
   console.log(result);
 }
 
-act(readFileAsJson, ${filename}, 'utf-8').call(null, done)
+act(readFileAsJson, path.join(__dirname, 'package.json'), 'utf-8').call(null, done)
 ```
 
-##### Partially applied function & Reusable blocks
+##### Reusable blocks
 
 ```js
+const fs = require('fs')
+const path = require('path')
+
 function parseContent(content, next) {
   setTimeout(() => {
+    console.log('called')
     try {
       next(null, JSON.parse(content))
     } catch (err) {
@@ -128,7 +83,8 @@ function parseContent(content, next) {
   })
 }
 
-function getSetting(key, settings, next) { // the second argument (settings) will be provided by the `parseContent`
+function getSetting(key, settings, next) {
+  // the second argument (settings) will be provided by the `parseContent`
   setTimeout(next, 0, null, settings[key])
 }
 
@@ -140,7 +96,16 @@ function done(err, result) {
   console.log(result);
 }
 
-const readSettings = act(fs.readFile, ${filename}, 'utf-8').act(parseContent) // define a reusable block
+// define block
+const readSettings = act(fs.readFile, path.join(__dirname, 'package.json'), 'utf-8')
+  .act(parseContent)
+  .once()
+
+// Note that if we DO NOT call `once` then fs.readFile and parseContent will be called for each branch
+// `Once` caches the result and reuses it across branches
+// Whether or not to use this kind of optimization depends on your task.
+// In this example, `once` helps to avoid double reading and parsing
+
 readSettings.act(getSetting, 'license').call(null, done)
 readSettings.act(getSetting, 'author').call(null, done)
 ```
