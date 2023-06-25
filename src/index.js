@@ -4,9 +4,31 @@ const act = function (fn, ...args) {
   const current = done => invoke(...buildCallStack(current, done))
   return Object.assign(
     current,
-    Object.freeze({ prev: this, fn, args, act: act.bind(current) })
+    Object.freeze({ prev: this, fn, args, act: act.bind(current), once: () => act(once(current)) })
   )
 }
+
+function once(cps) {
+    let queue = []
+    let result = null
+    let timer = null
+    return function (callback) {
+        if (result) {
+            callback(...result)
+            return
+        }
+        queue.push(callback)
+        if (timer !== null) return
+        timer = setTimeout(() => {
+            cps((...args) => {
+                result = args
+                queue.forEach(f => f(...result))
+                queue = []
+            })
+        })
+    }
+}
+
 
 const buildCallStack = (current, done, next = null) => {
   if (!current.prev) return [current, done, next]
@@ -31,4 +53,4 @@ const invoke = (current, done, next, rest = []) => {
   })
 }
 
-module.exports = act.bind(null)
+module.exports = { act: act.bind(null), once }
