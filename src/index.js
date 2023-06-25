@@ -8,12 +8,14 @@ const act = function (fn, ...args) {
   )
 }
 
+const None = Symbol('None')
+
 function once(cps) {
     let queue = []
-    let result = null
+    let result = None
     let timer = null
     return function (callback) {
-        if (result) {
+        if (result !== None) {
             callback(...result)
             return
         }
