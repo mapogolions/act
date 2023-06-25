@@ -10,11 +10,11 @@ const act = function (fn, ...args) {
 
 const None = Symbol('None')
 
-function once(cps) {
+const once = cps => {
     let queue = []
     let result = None
     let timer = null
-    return function (callback) {
+    return callback => {
         if (result !== None) {
             callback(...result)
             return
