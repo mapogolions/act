@@ -74,7 +74,7 @@ const path = require('path')
 
 function parseContent(content, next) {
   setTimeout(() => {
-    console.log('called')
+    console.log('called once')
     try {
       next(null, JSON.parse(content))
     } catch (err) {
@@ -107,7 +107,7 @@ const readSettings = act(fs.readFile, path.join(__dirname, 'package.json'), 'utf
 // In this example, `once` helps to avoid double reading and parsing
 
 readSettings.act(getSetting, 'license').call(null, done)
-readSettings.act(getSetting, 'author').call(null, done)
+readSettings.act(getSetting, 'version').call(null, done)
 ```
 
 Also see [unit tests](./test/test.js) for more details
