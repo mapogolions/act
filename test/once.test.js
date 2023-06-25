@@ -35,7 +35,6 @@ test.cb('delayed call should get value from cache when its registration precedes
   }, 100)
 })
 
-
 test.cb('delayed call should get value from cache when its registration follows cps call', t => {
   let calls = 0
   let consumers = 0
