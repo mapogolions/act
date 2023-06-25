@@ -4,33 +4,38 @@ const act = function (fn, ...args) {
   const current = done => invoke(...buildCallStack(current, done))
   return Object.assign(
     current,
-    Object.freeze({ prev: this, fn, args, act: act.bind(current), once: () => act(once(current)) })
+    Object.freeze({
+      prev: this,
+      fn,
+      args,
+      act: act.bind(current),
+      once: () => act(once(current))
+    })
   )
 }
 
 const None = Symbol('None')
 
 const once = cps => {
-    let queue = []
-    let result = None
-    let timer = null
-    return callback => {
-        if (result !== None) {
-            callback(...result)
-            return
-        }
-        queue.push(callback)
-        if (timer !== null) return
-        timer = setTimeout(() => {
-            cps((...args) => {
-                result = args
-                queue.forEach(f => f(...result))
-                queue = []
-            })
-        })
+  let queue = []
+  let result = None
+  let timer = null
+  return callback => {
+    if (result !== None) {
+      callback(...result)
+      return
     }
+    queue.push(callback)
+    if (timer !== null) return
+    timer = setTimeout(() => {
+      cps((...args) => {
+        result = args
+        queue.forEach(f => f(...result))
+        queue = []
+      })
+    })
+  }
 }
-
 
 const buildCallStack = (current, done, next = null) => {
   if (!current.prev) return [current, done, next]

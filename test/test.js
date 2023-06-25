@@ -3,22 +3,16 @@
 const test = require('ava')
 const { act, once } = require('../src/index')
 
-test.cb('should execute only once when registration occured in async manner and actual call', t => {
+test.cb('cps should be called only once when called from multiple consumers', t => {
   let calls = 0
-  let uniqueCalls = 0
+  let consumers = 0
   const readKey = next => setTimeout(() => {
     calls++
     next(null, 'key')
-  }, 500)
+  }, 500) // execute after all registration
   const readKeyOnce = once(readKey)
   readKeyOnce((err, key) => {
-    uniqueCalls++
-    t.is(err, null)
-    t.is(key, 'key')
-    t.is(calls, 1)
-  })
-  readKeyOnce((err, key) => {
-    uniqueCalls++
+    consumers++
     t.is(err, null)
     t.is(key, 'key')
     t.is(calls, 1)
@@ -26,32 +20,27 @@ test.cb('should execute only once when registration occured in async manner and 
 
   setTimeout(() => {
     readKeyOnce((err, key) => {
-      uniqueCalls++
+      consumers++
       t.is(err, null)
       t.is(key, 'key')
       t.is(calls, 1)
-      t.is(uniqueCalls, 3)
+      t.is(consumers, 2)
+
       t.end()
     })
   }, 100)
 })
 
-test.cb('should execute only once', t => {
+test.cb('should get value from cache when cps has been already called', t => {
   let calls = 0
-  let uniqueCalls = 0
+  let consumers = 0
   const readKey = next => setTimeout(() => {
     calls++
     next(null, 'key')
   }, 10)
   const readKeyOnce = once(readKey)
   readKeyOnce((err, key) => {
-    uniqueCalls++
-    t.is(err, null)
-    t.is(key, 'key')
-    t.is(calls, 1)
-  })
-  readKeyOnce((err, key) => {
-    uniqueCalls++
+    consumers++
     t.is(err, null)
     t.is(key, 'key')
     t.is(calls, 1)
@@ -59,11 +48,12 @@ test.cb('should execute only once', t => {
 
   setTimeout(() => {
     readKeyOnce((err, key) => {
-      uniqueCalls++
+      consumers++
       t.is(err, null)
       t.is(key, 'key')
       t.is(calls, 1)
-      t.is(uniqueCalls, 3)
+      t.is(consumers, 2)
+
       t.end()
     })
   }, 500)
