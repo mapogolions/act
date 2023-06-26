@@ -15,10 +15,10 @@ test.cb('delayed call should get value from cache when its registration precedes
 
   setTimeout(() => {
     readKeyOnce((err, key) => {
-      consumers++
       t.is(err, null)
       t.is(key, 'key')
       t.is(calls, 1)
+      consumers++
     })
   })
 
@@ -46,10 +46,10 @@ test.cb('delayed call should get value from cache when its registration follows 
 
   setTimeout(() => {
     readKeyOnce((err, key) => {
-      consumers++
       t.is(err, null)
       t.is(key, 'key')
       t.is(calls, 1)
+      consumers++
     })
   })
 
@@ -77,10 +77,10 @@ test.cb('should get value from cache when non-blocking sequential calls', t => {
   const readKeyOnce = once(readKey)
 
   readKeyOnce((err, key) => {
-    consumers++
     t.is(err, null)
     t.is(key, 'key')
     t.is(calls, 1)
+    consumers++
   })
 
   readKeyOnce((err, key) => {
@@ -106,11 +106,13 @@ test.cb('should be able to pass extra arguments and callback as last one', t => 
 test.cb('blocking function should block flow', t => {
   let shared = 0
   const f = once(callback => { shared++; callback(null) })
+
   f((_err, _result) => {
     t.is(shared, 1)
+    shared++
   })
 
-  t.is(shared, 1)
+  t.is(shared, 2)
   t.end()
 })
 
