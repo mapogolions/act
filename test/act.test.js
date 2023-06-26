@@ -42,7 +42,7 @@ test.cb('should execute chain', t => {
 })
 
 test.cb('should short-circuit pipeline when error occurs on reusable block execution', t => {
-  const error = { code: -1, message: "something went wrong" }
+  const error = { code: -1, message: 'something went wrong' }
   const step1 = wrap(10, next => next(null))
   const step2 = wrap(10, next => next(error))
   const block = act(step1).act(step2).once()
