@@ -41,6 +41,25 @@ test.cb('should execute chain', t => {
   })
 })
 
+test.cb('should short-circuit pipeline when error occurs on reusable block execution', t => {
+  const error = { code: -1, message: "something went wrong" }
+  const step1 = wrap(10, next => next(null))
+  const step2 = wrap(10, next => next(error))
+  const block = act(step1).act(step2).once()
+
+  const f = block.act(wrap(10, _next => t.fail()))
+  const g = block.act(wrap(10, _next => t.fail()))
+
+  f((err, _result) => {
+    t.is(err.code, -1)
+
+    g((err, _result) => {
+      t.is(err.code, -1)
+      t.end()
+    })
+  })
+})
+
 test.cb('should force reusable block to be executed only once', t => {
   let shared = 0
   const counter = wrap(10, next => { shared++; next(null) })
@@ -56,7 +75,7 @@ test.cb('should force reusable block to be executed only once', t => {
   })
 })
 
-test.cb('reusable block is executed for each branch', t => {
+test.cb('should execute reusable block for each branch', t => {
   let shared = 0
   const counter = wrap(10, next => { shared++; next(null) })
 
@@ -71,20 +90,6 @@ test.cb('reusable block is executed for each branch', t => {
   })
 })
 
-test.cb('should be able to reuse block', t => {
-  const counter = wrap(10, (n, next) => next(null, ++n))
-  const block = act(counter, 0).act(counter).act(counter)
-  const f = block.act(counter)
-  const g = block.act(counter).act(counter).act(counter).act(counter).act(counter).act(counter)
-
-  block((_err, result) => t.is(result, 3))
-  f((_err, result) => t.is(result, 4))
-  g((_err, result) => {
-    t.is(result, 9)
-    t.end()
-  })
-})
-
 test.cb('should short-circuit pipeline when passed non-null object as the first argument', t => {
   const foo = wrap(40, next => {
     next(null, 'foo')
@@ -95,7 +100,7 @@ test.cb('should short-circuit pipeline when passed non-null object as the first 
     next({ code: 101 })
   })
 
-  const baz = wrap(30, next => t.fail)
+  const baz = wrap(30, _next => t.fail())
 
   const f = act(foo).act(bar).act(baz)
   f((err, result) => {
