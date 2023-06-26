@@ -16,24 +16,23 @@ const act = function (fn, ...args) {
 
 const None = Symbol('None')
 
-const once = (...args) => {
-  const cps = args.pop()
+const once = fn => {
   let queue = []
   let result = None
-  let timer = null
-  return callback => {
+  let running = false
+  return (...args) => {
+    const callback = args.pop()
     if (result !== None) {
       callback(...result)
       return
     }
     queue.push(callback)
-    if (timer !== null) return
-    timer = setTimeout(() => {
-      cps((...args) => {
-        result = args
-        queue.forEach(f => f(...result))
-        queue = []
-      })
+    if (running) return
+    running = true
+    fn(...args, (...args) => {
+      result = args
+      queue.forEach(f => f(...result))
+      queue = []
     })
   }
 }

@@ -93,3 +93,38 @@ test.cb('should get value from cache when non-blocking sequential calls', t => {
     t.end()
   })
 })
+
+test.cb('should be able to pass extra arguments and callback as last one', t => {
+  const f = once((n, callback) => setTimeout(callback, 0, null, ++n))
+
+  f(3, (_err, result) => {
+    t.is(result, 4)
+    t.end()
+  })
+})
+
+test.cb('blocking function should block flow', t => {
+  let shared = 0
+  const f = once(callback => { shared++; callback(null) })
+  f((_err, _result) => {
+    t.is(shared, 1)
+  })
+
+  t.is(shared, 1)
+  t.end()
+})
+
+test.cb('non-blocking function should not block flow', t => {
+  let shared = 0
+  const f = once(next => setTimeout(() => {
+    shared++
+    next(null)
+  }))
+
+  f((_err, _result) => {
+    t.is(shared, 1)
+    t.end()
+  })
+
+  t.is(shared, 0)
+})
