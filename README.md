@@ -1,7 +1,6 @@
 # act
 
-Inspired by [do](https://github.com/metarhia/do)
-
+[![CI](https://github.com/mapogolions/act/actions/workflows/ci.yaml/badge.svg)](https://github.com/mapogolions/act/actions/workflows/ci.yaml)
 
 #### How to install
 
