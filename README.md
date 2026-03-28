@@ -32,15 +32,25 @@ function readFileAsJson(filename, encoding, next) {
   });
 }
 
-function done(err, result) {
+function selectKeys(props, obj, next) {
+    const view = {};
+    for (const prop of props) {
+       view[prop] = obj[prop]
+    }
+    next(null, view);
+}
+
+var filename = path.join(__dirname, 'package.json');
+const f = act(readFileAsJson, filename, 'utf-8')
+    .act(selectKeys, ['version', 'license']);
+
+f((err, result) => {
   if (err) {
     console.error(err.message)
     return;
   }
   console.log(result);
-}
-
-act(readFileAsJson, path.join(__dirname, 'package.json'), 'utf-8').call(null, done)
+})
 ```
 
 ##### How to use with `Promise`
@@ -55,15 +65,25 @@ function readFileAsJson(filename, encoding, next) {
     .catch(next)
 }
 
-function done(err, result) {
+function selectKeys(props, obj, next) {
+    const view = {};
+    for (const prop of props) {
+       view[prop] = obj[prop]
+    }
+    next(null, view);
+}
+
+var filename = path.join(__dirname, 'package.json');
+const f = act(readFileAsJson, filename, 'utf-8')
+    .act(selectKeys, ['version', 'name']);
+
+f((err, result) => {
   if (err) {
     console.error(err.message)
     return;
   }
   console.log(result);
-}
-
-act(readFileAsJson, path.join(__dirname, 'package.json'), 'utf-8').call(null, done)
+})
 ```
 
 ##### Reusable blocks
@@ -106,7 +126,7 @@ const readSettings = act(fs.readFile, path.join(__dirname, 'package.json'), 'utf
 // Whether or not to use this kind of optimization depends on your task.
 // In this example, `once` helps to avoid double reading and parsing
 
-readSettings.act(getSetting, 'license').call(null, done)
+readSettings.act(getSetting, 'license')(done)
 readSettings.act(getSetting, 'version').call(null, done)
 ```
 
